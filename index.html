@@ -4,11 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Messing Around with 3D</title>
+    <title>3D -> 2D Projection</title>
     <style>
-        .slidecontainer {
-            width: 100%;
-            /* Width of the outside container */
+        body {
+            background-color: #222;
+            overflow: hidden;
         }
         
         .slider {
@@ -40,22 +40,27 @@
             background: #04AA6D;
             cursor: pointer;
         }
+        
+        p {
+            color: white;
+            font-family: sans-serif, monospace
+        }
     </style>
 </head>
 
 <body>
     <canvas id="canvas"></canvas>
     <div class="slidecontainer">
+        <p>Focal Length</p>
+        <input type="range" min="0" max="200" value="20" step="0.05" class=" slider " id="focal" oninput="updateCanvas() ">
+    </div>
+    <div class="slidecontainer">
         <p>Camera X</p>
-        <input type="range" min="-200" max="200" value="-125" step="0.05" class=" slider " id="x" oninput="update() ">
+        <input type="range" min="-400" max="400" value="150" step="0.05" class=" slider " id="cx" oninput="updateCanvas() ">
     </div>
     <div class="slidecontainer">
         <p>Camera Y</p>
-        <input type="range" min="-200" max="200" value="-125" step="0.05" class=" slider " id="y" oninput="update() ">
-    </div>
-    <div class="slidecontainer">
-        <p>Focal Length</p>
-        <input type="range" min="0" max="100" value="5" step="0.05" class=" slider " id="focal" oninput="update() ">
+        <input type="range" min="-400" max="400" value="150" step="0.05" class=" slider " id="cy" oninput="updateCanvas() ">
     </div>
     <script src="script.js"></script>
 </body>

@@ -1,14 +1,16 @@
-const canvas = document.querySelector("#canvas")
+const canvas = document.querySelector("#canvas");
+const context = canvas.getContext("2d");
 
-canvas.width = window.innerWidth
-canvas.height = window.innerHeight - 250
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight - 250;
 
-const X_CENTER = canvas.width / 2
-const Y_CENTER = canvas.height / 2
+const X_CENTER = canvas.width / 2;
+const Y_CENTER = canvas.height / 2;
 
-const context = canvas.getContext("2d")
+context.fillStyle = "black";
+context.strokeStyle = "white";
 
-const VERTICES = [
+let VERTICES = [
     [0, 0, 30],
     [0, 300, 30],
     [300, 0, 30],
@@ -19,7 +21,7 @@ const VERTICES = [
     [300, 300, 60],
 ];
 
-const INDICES = [
+let INDICES = [
     [0, 1],
     [1, 3],
     [3, 2],
@@ -34,36 +36,31 @@ const INDICES = [
     [2, 6],
 ];
 
-function degreesToRadians(n) {
-    return n * (Math.PI / 180)
-}
+var projectedVertices = [];
 
-let adjustedVertices;
+function updateCanvas() {
 
-function update() {
+    projectedVertices = [];
+
     context.clearRect(0, 0, canvas.width, canvas.height)
 
-    let focalLength = parseFloat(document.querySelector("#focal").value)
-    let cx = parseFloat(document.querySelector("#x").value)
-    let cy = parseFloat(document.querySelector("#y").value)
-
-    adjustedVertices = [];
+    var focalLength = parseFloat(document.querySelector("#focal").value)
+    var cameraX = parseFloat(document.querySelector("#cx").value)
+    var cameraY = parseFloat(document.querySelector("#cy").value)
 
     for (vertex of VERTICES) {
-        let coord = [0, 0]
-        let xSimpleProj = (focalLength * vertex[0]) / (focalLength + vertex[2])
-        let ySimpleProj = (focalLength * vertex[1]) / (focalLength + vertex[2])
-        coord[0] = xSimpleProj + cx - ((cx * vertex[2]) / (focalLength + vertex[2])) + X_CENTER
-        coord[1] = ySimpleProj + cy - ((cy * vertex[2]) / (focalLength + vertex[2])) + Y_CENTER
-        adjustedVertices.push(coord)
+        let onScreenCoordinate = [0, 0];
+        onScreenCoordinate[0] = (focalLength * (vertex[0] - cameraX)) / (focalLength + vertex[2]) + X_CENTER;
+        onScreenCoordinate[1] = (focalLength * (vertex[1] - cameraY)) / (focalLength + vertex[2]) + Y_CENTER;
+        projectedVertices.push(onScreenCoordinate);
     }
 
-    for (let [startIndex, endIndex] of INDICES) {
+    for (let [startCoordinate, endCoordinate] of INDICES) {
         context.beginPath();
-        context.moveTo(adjustedVertices[startIndex][0], adjustedVertices[startIndex][1]);
-        context.lineTo(adjustedVertices[endIndex][0], adjustedVertices[endIndex][1]);
+        context.moveTo(projectedVertices[startCoordinate][0], projectedVertices[startCoordinate][1]);
+        context.lineTo(projectedVertices[endCoordinate][0], projectedVertices[endCoordinate][1]);
         context.stroke();
     }
 }
 
-update()
+updateCanvas();
