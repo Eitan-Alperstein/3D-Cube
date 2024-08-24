@@ -123,13 +123,15 @@
             <a href="https://projection.eitanalperstein.com">Demo</a>
         </p>
 
+        <b style="color:red">Unfinished and unmaintained; might finish later.</b>
+
         <p>Ever wondered how a three-dimensional object gets displayed on a two-dimensional computer screen? It's actually quite simple. With basic geometry, you can project 3D objects onto a 2D canvas using HTML, CSS, and JavaScript, without the need for
             WebGL or a GPU.</p>
 
         <h2>Getting Started</h2>
 
         <p>First, let's create the canvas we'll be drawing on. Here’s a basic HTML setup:</p>
-        <pre class="language-html line-numbers" data-prismjs-copy="Copy to clipboard">
+        <pre class="language-html" data-prismjs-copy="Copy to clipboard">
 <code>&lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
     &lt;head&gt;
@@ -150,8 +152,8 @@
 &lt;/html&gt;
 </code></pre>
 
-        <p>Now, let's code the <code>script.js</code> file to connect to the canvas:</p>
-        <pre class="language-javascript line-numbers match-braces" data-prismjs-copy="Copy to clipboard">
+        <p>And set up our <code>script.js</code> file:</p>
+        <pre class="language-javascript match-braces" data-prismjs-copy="Copy to clipboard">
 <code>const canvas = document.querySelector("#canvas");
 const context = canvas.getContext("2d");
 
@@ -161,11 +163,11 @@ canvas.height = window.innerHeight - 250;
 const X_CENTER = canvas.width / 2;
 const Y_CENTER = canvas.height / 2;
 
-context.fillStyle = "black";
 context.strokeStyle = "white";</code></pre>
 
-        <p>Here, we set up our canvas and context, define the canvas size, and center the drawing area. We then make the lines white. Next, we define the vertices of our cube and create the necessary projections:</p>
-        <pre class="language-javascript line-numbers match-braces" data-prismjs-copy="Copy to clipboard">
+        <p>Here, we set up our canvas and tell the browser that it is 2D, rather than webgl or 3D, set the canvas to the width of the browser tab and the height of the tab (minus a few hundred pixels for the sliders we'll add later), and define the center
+            of our canvas. We then make all lines white. Now, we need to define the vertices of our cube and create the necessary projections:</p>
+        <pre class="language-javascript  match-braces" data-prismjs-copy="Copy to clipboard">
 <code>let VERTICES = [
     [0, 0, 30],
     [0, 300, 30],
@@ -215,14 +217,25 @@ function updateCanvas() {
 
 updateCanvas();</code></pre>
 
-        <h2>Understanding the Projection</h2>
+        <h2>Understanding the Projection Code</h2>
         <ol>
-            <li>The vertices define the points of the cube, and the indices describe which points connect to form the edges.</li>
-            <li>We transform 3D coordinates to 2D by ignoring the z-axis initially. The <code>updateCanvas</code> function handles this conversion and draws the lines connecting the projected vertices.</li>
+            <li>Define the cube's vertices in 3D coordinates. In essence, we are making two flat squares, with one being z=30 and the other z=60.</li>
+            <li>Define the indices. These are the lines that will connect our vertices once we turn them into coordinates on the canvas. Usually, index arrays are one dimensional, but our code will be easier to understand and write if we can define a start
+                and end point to every line we make.</li>
+            <li>Initialize our <code>projectedVertices</code> array, which will hold the 2D coordinates of our cube's vertices once we have done the appropriate math on them.</li>
+            <li>Define the <code>updateCanvas()</code> function.
+                <ol>
+                    <li>Reset <code>projectedVertices</code></li>
+                    <li>Clear the canvas.</li>
+                    <li>Loop through <code>VERTICES</code>. We'll eventually need to apply our math to each vertex, but for now, we'll just ignore the z-axis for proof of concept.</li>
+                    <li>Loop through <code>INDICES</code>, taking each starting point and ending point from <code>projectedVertices</code> and drawing a line through it.</li>
+                </ol>
+            </li>
+            <li>Call our function.</li>
         </ol>
 
         <p>If done correctly, you should see a flat white square. To incorporate the third dimension into the projection, we use geometry to calculate where each vertex appears on the screen based on its z-coordinate and a focal length:</p>
-        <pre class="language-javascript line-numbers match-braces" data-prismjs-copy="Copy to clipboard">
+        <pre class="language-javascript  match-braces" data-prismjs-copy="Copy to clipboard">
 <code>var focalLength = 5;
 
 for (let vertex of VERTICES) {
@@ -233,14 +246,14 @@ for (let vertex of VERTICES) {
 }</code></pre>
 
         <p>To manipulate the focal length, add a slider to your HTML:</p>
-        <pre class="language-html line-numbers" data-prismjs-copy="Copy to clipboard">
+        <pre class="language-html " data-prismjs-copy="Copy to clipboard">
 <code>&lt;div class="slider-container"&gt;
     &lt;p&gt;Focal Length&lt;/p&gt;
     &lt;input type="range" min="0" max="200" value="20" step="0.05" class="slider" id="focal" oninput="updateCanvas()"&gt;
 &lt;/div&gt;</code></pre>
 
         <p>And some CSS for styling the slider:</p>
-        <pre class="language-css line-numbers" data-prismjs-copy="Copy to clipboard">
+        <pre class="language-css " data-prismjs-copy="Copy to clipboard">
 <code>.slider {
     -webkit-appearance: none;
     width: 100%;
@@ -276,11 +289,11 @@ p {
 }</code></pre>
 
         <p>Update the JavaScript to read the slider value and adjust the focal length:</p>
-        <pre class="language-javascript line-numbers" data-prismjs-copy="Copy to clipboard">
+        <pre class="language-javascript " data-prismjs-copy="Copy to clipboard">
 <code>let focalLength = parseFloat(document.querySelector("#focal").value);</code></pre>
 
         <p>Additionally, to enhance the effect, consider adding sliders to control the camera's X and Y positions:</p>
-        <pre class="language-html line-numbers" data-prismjs-copy="Copy to clipboard">
+        <pre class="language-html " data-prismjs-copy="Copy to clipboard">
 <code>&lt;div class="slider-container"&gt;
     &lt;p&gt;Camera X&lt;/p&gt;
     &lt;input type="range" min="-400" max="400" value="5" step="0.05" class="slider" id="cx" oninput="updateCanvas()"&gt;
@@ -291,7 +304,7 @@ p {
 &lt;/div&gt;</code></pre>
 
         <p>Update the projection calculation to account for the camera position:</p>
-        <pre class="language-javascript line-numbers" data-prismjs-copy="Copy to clipboard">
+        <pre class="language-javascript " data-prismjs-copy="Copy to clipboard">
 <code>onScreenCoordinate[0] = (focalLength * (vertex[0] - cameraX)) / (focalLength + vertex[2]) + X_CENTER;
 onScreenCoordinate[1] = (focalLength * (vertex[1] - cameraY)) / (focalLength + vertex[2]) + Y_CENTER;</code></pre>
 

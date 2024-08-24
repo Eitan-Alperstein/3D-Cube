@@ -7,7 +7,6 @@ canvas.height = window.innerHeight - 250;
 const X_CENTER = canvas.width / 2;
 const Y_CENTER = canvas.height / 2;
 
-context.fillStyle = "black";
 context.strokeStyle = "white";
 
 let VERTICES = [
